@@ -1,0 +1,18 @@
+# Python virtual environment
+venv/
+
+# Django SQLite database
+*.sqlite3
+
+# Django and Python cache
+__pycache__/
+*.pyc
+
+# VS Code settings
+.vscode/
+
+# Static files
+staticfiles/
+
+# Environment variables file
+.env
