@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks List</title>
+</head>
+<body>
+    <h1>All Tasks</h1>
+    <div id="tasks-container">
+        <!-- 任务列表将在这里显示 -->
+    </div>
+
+    <div id="task-details" style="display: none;">
+        <!-- 任务详情将在这里显示 -->
+        <h2>Task Details</h2>
+        <div id="task-details-content">
+            <!-- 动态更新的任务详情内容 -->
+        </div>
+        <button id="apply-task-button" style="display: none;">Apply for this Task</button>
+    </div>
+
+    <script>
+        let currentTaskId = null;
+
+        // 获取所有任务的列表
+        function fetchTasks() {
+            const accessToken = localStorage.getItem('access_token');
+            
+            if (!accessToken) {
+                alert('You are not logged in. Please log in first.');
+                return;
+            }
+
+            fetch('http://127.0.0.1:8000/api/tasks/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(tasks => {
+                const tasksContainer = document.getElementById('tasks-container');
+                tasksContainer.innerHTML = ''; // 清空当前内容
+
+                // 遍历任务数据，生成每个任务的 HTML 元素
+                tasks.forEach(task => {
+                    const taskElement = document.createElement('div');
+                    taskElement.innerHTML = `
+                        <h3>${task.title}</h3>
+                        <p>Budget: ${task.budget}</p>
+                        <p>Posted by: ${task.posted_by}</p>
+                        <button onclick="viewTaskDetails(${task.id})">View Details</button>
+                    `;
+                    tasksContainer.appendChild(taskElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching tasks:', error);
+                alert('Error fetching tasks.');
+            });
+        }
+
+        // 查看任务详情的函数
+        function viewTaskDetails(taskId) {
+            const accessToken = localStorage.getItem('access_token');
+
+            fetch(`http://127.0.0.1:8000/api/tasks/${taskId}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(task => {
+                currentTaskId = task.id;
+                const taskDetails = document.getElementById('task-details');
+                const taskDetailsContent = document.getElementById('task-details-content');
+                taskDetails.style.display = 'block'; // 显示任务详情部分
+
+                // 填充任务详情
+                taskDetailsContent.innerHTML = `
+                    <h3>${task.title}</h3>
+                    <p>Description: ${task.description}</p>
+                    <p>Budget: ${task.budget}</p>
+                    <p>Deadline: ${task.deadline}</p>
+                    <p>Posted by: ${task.posted_by}</p>
+                    <p>Created at: ${task.created_at}</p>
+                    <p>Updated at: ${task.updated_at}</p>
+                `;
+
+                // 检查用户角色是否为网红
+                fetchUserRole()
+                    .then(role => {
+                        const applyButton = document.getElementById('apply-task-button');
+                        if (role === 'influencer') {
+                            applyButton.style.display = 'block';
+                        } else {
+                            applyButton.style.display = 'none';
+                        }
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching task details:', error);
+                alert('Error fetching task details.');
+            });
+        }
+
+        // 获取用户角色
+        function fetchUserRole() {
+            const accessToken = localStorage.getItem('access_token');
+
+            return fetch('http://127.0.0.1:8000/api/me/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                return data.role; // 返回用户角色 (如 'merchant' 或 'influencer')
+            })
+            .catch(error => {
+                console.error('Error fetching user information:', error);
+                return null;
+            });
+        }
+
+        // 申请任务的函数
+        document.getElementById('apply-task-button').addEventListener('click', function() {
+            const accessToken = localStorage.getItem('access_token');
+
+            fetch(`http://127.0.0.1:8000/api/tasks/${currentTaskId}/apply/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => { throw new Error(data.detail || 'Error applying for task'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Successfully applied for the task!');
+            })
+            .catch(error => {
+                console.error('Error applying for task:', error);
+                alert('Error applying for task: ' + error.message);
+            });
+        });
+
+        // 页面加载时获取任务列表
+        window.onload = fetchTasks;
+    </script>
+</body>
+</html>

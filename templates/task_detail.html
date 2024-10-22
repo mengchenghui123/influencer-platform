@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+</head>
+<body>
+    <h1>Task Details</h1>
+    <div id="task-details">
+        <!-- 任务详情将在这里显示 -->
+    </div>
+
+    <script>
+        // 获取任务的 ID
+        function getTaskIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // 获取并显示任务详情
+        function fetchTaskDetails() {
+            const taskId = getTaskIdFromURL();
+
+            fetch(`http://127.0.0.1:8000/api/tasks/${taskId}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(task => {
+                const taskDetails = document.getElementById('task-details');
+                taskDetails.innerHTML = `
+                    <h3>${task.title}</h3>
+                    <p>Description: ${task.description}</p>
+                    <p>Budget: ${task.budget}</p>
+                    <p>Deadline: ${task.deadline}</p>
+                    <p>Posted by: ${task.posted_by}</p>
+                    <p>Created at: ${task.created_at}</p>
+                    <p>Updated at: ${task.updated_at}</p>
+                `;
+            })
+            .catch(error => {
+                console.error('Error fetching task details:', error);
+                alert('Error fetching task details.');
+            });
+        }
+
+        // 页面加载时获取任务详情
+        window.onload = fetchTaskDetails;
+    </script>
+</body>
+</html>

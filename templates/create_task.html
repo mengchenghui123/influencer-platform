@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+</head>
+<body>
+    <h1>Create a New Task</h1>
+    <form id="task-create-form">
+        <label for="task-title">Task Title:</label>
+        <input type="text" id="task-title" required><br><br>
+
+        <label for="task-description">Task Description:</label>
+        <textarea id="task-description" required></textarea><br><br>
+
+        <label for="task-budget">Budget:</label>
+        <input type="number" id="task-budget" required><br><br>
+
+        <label for="task-deadline">Deadline:</label>
+        <input type="date" id="task-deadline" required><br><br>
+
+        <button type="submit">Create Task</button>
+    </form>
+
+    <script>
+        const accessToken = localStorage.getItem('access_token');
+
+        document.getElementById('task-create-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-description').value;
+            const budget = document.getElementById('task-budget').value;
+            const deadline = document.getElementById('task-deadline').value;
+
+            fetch('http://127.0.0.1:8000/api/tasks/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    budget: budget,
+                    deadline: deadline
+                })
+            })
+            .then(response => {
+                if (response.status === 201) {
+                    alert('Task created successfully!');
+                    window.location.href = '/tasks.html';
+                } else {
+                    alert('Failed to create task.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating task.');
+            });
+        });
+    </script>
+</body>
+</html>
