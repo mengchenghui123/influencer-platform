@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
@@ -36,6 +38,12 @@ class CustomUser(AbstractUser):
 User = get_user_model()
 
 class Task(models.Model):
+    STATUS_CHOICES = [
+        ('available', 'Available'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
+
     title = models.CharField(max_length=255)
     description = models.TextField()
     budget = models.DecimalField(max_digits=10, decimal_places=2)
@@ -43,6 +51,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name='tasks')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
 
     def __str__(self):
         return self.title
@@ -55,3 +64,11 @@ class TaskApplication(models.Model):
 
     def __str__(self):
         return f"{self.applicant.username} applied for {self.task.title} with status {self.status}"
+
+# 当任务申请被批准后，更新对应任务的状态为 "in_progress"
+@receiver(post_save, sender=TaskApplication)
+def update_task_status(sender, instance, **kwargs):
+    if instance.status == 'approved':
+        task = instance.task
+        task.status = 'in_progress'
+        task.save()

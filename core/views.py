@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import BasePermission
 from .models import CustomUser
 import logging
+from rest_framework.exceptions import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +88,10 @@ class TaskApplicationCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         task_id = self.kwargs.get('pk')
         task = generics.get_object_or_404(Task, id=task_id)
+        # 检查任务是否可用
+        if task.status != 'available':
+            raise ValidationError("This task is not available for application.")
+
         # Save the task application with the current user as the applicant
         serializer.save(applicant=self.request.user, task=task)
 

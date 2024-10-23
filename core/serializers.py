@@ -53,13 +53,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'role', 'phone_number', 'address','first_name','last_name']
 
 class TaskSerializer(serializers.ModelSerializer):
+    posted_by = serializers.CharField(source='posted_by.username', read_only=True)  # 返回用户名而非ID
+
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'budget', 'deadline', 'created_at', 'updated_at', 'posted_by']
+        fields = ['id', 'title', 'description', 'budget', 'deadline', 'created_at', 'updated_at', 'posted_by','status']
         read_only_fields = ['id', 'created_at', 'updated_at', 'posted_by']
     
     def create(self, validated_data):
-        #自定义
         return Task.objects.create(**validated_data)
     
 class TaskApplicationSerializer(serializers.ModelSerializer):
