@@ -104,3 +104,25 @@ class TaskApplicationCreateView(generics.CreateAPIView):
             return Response({"detail": "You have already applied for this task."}, status=status.HTTP_400_BAD_REQUEST)
         
         return super().post(request, *args, **kwargs)
+
+class MyAppliedTasksView(generics.ListAPIView):
+    serializer_class = TaskApplicationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # 过滤出当前用户的申请
+        return TaskApplication.objects.filter(applicant=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        # 使用序列化器获取完整的任务数据，包括申请状态信息
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class MyPostedTasksView(generics.ListAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(posted_by=self.request.user)

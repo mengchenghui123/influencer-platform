@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import TaskCreateView, TaskListView, TaskDetailView, RegisterView, UserDetailView, LogoutView,TaskApplicationCreateView
+from .views import TaskCreateView, TaskListView, TaskDetailView, RegisterView, UserDetailView, LogoutView,TaskApplicationCreateView,MyAppliedTasksView, MyPostedTasksView
+
     
 urlpatterns = [
     # API 登录路径
@@ -18,4 +19,6 @@ urlpatterns = [
     path('api/tasks/create/', TaskCreateView.as_view(), name='api-task-create'),
     # 申请任务 API
     path('api/tasks/<int:pk>/apply/', TaskApplicationCreateView.as_view(), name='api-task-apply'),
+    path('api/my-applied-tasks/', MyAppliedTasksView.as_view(), name='my-applied-tasks'),
+    path('api/my-posted-tasks/', MyPostedTasksView.as_view(), name='my-posted-tasks'),
 ]

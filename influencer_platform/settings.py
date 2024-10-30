@@ -66,6 +66,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'influencer_platform.urls'
 
+# 允许所有来源（测试阶段），在生产中限制来源
 CORS_ALLOW_ALL_ORIGINS = True
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
