@@ -1,58 +1,64 @@
 <template>
-    <div class="container">
-      <h2>Registration</h2>
-      <form @submit.prevent="register">
-        <div class="form-group">
-          <label for="username">Username:</label>
-          <input type="text" class="form-control" v-model="username" required>
+    <div class="register-container d-flex justify-content-center align-items-center">
+      <div class="register-card card shadow-lg">
+        <div class="card-header text-center bg-primary text-white">
+          <h3 class="mb-0">Registration</h3>
         </div>
-  
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" class="form-control" v-model="email" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" class="form-control" v-model="password" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="firstName">First Name:</label>
-          <input type="text" class="form-control" v-model="firstName" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="lastName">Last Name:</label>
-          <input type="text" class="form-control" v-model="lastName" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="phone">Phone Number:</label>
-          <input type="text" class="form-control" v-model="phoneNumber" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="address">Address:</label>
-          <textarea class="form-control" v-model="address" required></textarea>
-        </div>
-  
-        <div class="form-group">
-          <label for="role">Role:</label>
-          <div class="select-wrapper">
-            <select class="form-control role-select" v-model="role" required>
-              <option value="">Select your role</option>
-              <option value="merchant">Merchant</option>
-              <option value="influencer">Influencer</option>
-            </select>
+        <div class="card-body">
+          <form @submit.prevent="register">
+            <div class="form-group mb-3">
+              <label for="username">Username:</label>
+              <input type="text" class="form-control" v-model="username" required />
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="email">Email:</label>
+              <input type="email" class="form-control" v-model="email" required />
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" v-model="password" required />
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="firstName">First Name:</label>
+              <input type="text" class="form-control" v-model="firstName" required />
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="lastName">Last Name:</label>
+              <input type="text" class="form-control" v-model="lastName" required />
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="phone">Phone Number:</label>
+              <input type="text" class="form-control" v-model="phoneNumber" required />
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="address">Address:</label>
+              <textarea class="form-control" v-model="address" required></textarea>
+            </div>
+    
+            <div class="form-group mb-3">
+              <label for="role">Role:</label>
+              <div class="select-wrapper">
+                <select class="form-control role-select" v-model="role" required>
+                  <option value="">Select your role</option>
+                  <option value="merchant">Merchant</option>
+                  <option value="influencer">Influencer</option>
+                </select>
+              </div>
+            </div>
+    
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+          </form>
+    
+          <div v-if="errorMessage" class="alert alert-danger mt-3 text-center">
+            {{ errorMessage }}
           </div>
         </div>
-  
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
-  
-      <div v-if="errorMessage" class="alert alert-danger mt-3">
-        {{ errorMessage }}
       </div>
     </div>
   </template>
@@ -61,7 +67,7 @@
   import axios from 'axios';
   
   export default {
-    name: 'UserRegister', // 保持多词命名
+    name: 'UserRegister',
     data() {
       return {
         username: '',
@@ -81,10 +87,10 @@
           username: this.username,
           email: this.email,
           password: this.password,
-          first_name: this.firstName, // 传递 firstName
-          last_name: this.lastName,   // 传递 lastName
-          phone_number: this.phoneNumber, // 传递 phoneNumber
-          address: this.address,      // 传递 address
+          first_name: this.firstName,
+          last_name: this.lastName,
+          phone_number: this.phoneNumber,
+          address: this.address,
           role: this.role
         })
         .then(() => {
@@ -99,7 +105,27 @@
   </script>
   
   <style scoped>
-  /* 控制角色选择框右侧的箭头 */
+  .register-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .register-card {
+    width: 350px;
+    border-radius: 8px;
+  }
+  
+  .card-header {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
   .select-wrapper {
     position: relative;
   }
@@ -108,18 +134,25 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    position: relative;
-    width: 100%;
-    padding-right: 30px; /* 确保箭头不会遮挡文本 */
+    padding-right: 30px;
   }
   
   .role-select::after {
-    content: '▼'; /* 箭头 */
+    content: '▼';
     position: absolute;
     top: 50%;
-    right: 10px; /* 控制箭头位置 */
+    right: 10px;
     transform: translateY(-50%);
     pointer-events: none;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
   }
   </style>
   

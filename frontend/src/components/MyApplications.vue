@@ -14,19 +14,43 @@
                 <th>Task Name</th>
                 <th>Status</th>
                 <th>Applied Date</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="application in applications" :key="application.id">
-                <td>{{ application.task }}</td>
+                <td>
+                  <a
+                    href="javascript:void(0);"
+                    @click="goToTaskDetail(application.task.id)"
+                    class="text-primary"
+                  >
+                    {{ application.task.title }}
+                  </a>
+                </td>
                 <td>{{ application.status }}</td>
                 <td>{{ new Date(application.applied_at).toLocaleDateString() }}</td>
+                <td>
+                  <button
+                    v-if="application.status === 'pending'"
+                    @click="cancelApplication(application.id)"
+                    class="btn btn-danger btn-sm"
+                  >
+                    Cancel
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="card-footer text-center">
           <button @click="goToProfile" class="btn btn-secondary btn-sm">Back to Profile</button>
+        </div>
+        <div v-if="errorMessage" class="alert alert-danger mt-3 text-center">
+          {{ errorMessage }}
+        </div>
+        <div v-if="successMessage" class="alert alert-success mt-3 text-center">
+          {{ successMessage }}
         </div>
       </div>
     </div>
@@ -41,6 +65,7 @@
       return {
         applications: [],
         errorMessage: '',
+        successMessage: ''
       };
     },
     mounted() {
@@ -58,6 +83,24 @@
           })
           .catch((error) => {
             this.errorMessage = 'Failed to fetch applications. Please try again.';
+            console.error(error);
+          });
+      },
+      goToTaskDetail(taskId) {
+        this.$router.push(`/tasks/${taskId}`);
+      },
+      cancelApplication(applicationId) {
+        const token = localStorage.getItem('access_token');
+        axios
+          .delete(`http://127.0.0.1:8000/api/task-applications/${applicationId}/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then(() => {
+            this.successMessage = 'Application canceled successfully.';
+            this.fetchApplications(); // Refresh the applications list
+          })
+          .catch((error) => {
+            this.errorMessage = 'Failed to cancel application. Please try again.';
             console.error(error);
           });
       },

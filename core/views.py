@@ -11,7 +11,10 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import BasePermission
 from .models import CustomUser
 import logging
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
+from django.db.models import Count
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
 
 logger = logging.getLogger(__name__)
 
@@ -75,9 +78,10 @@ class TaskCreateView(generics.CreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated, IsMerchant]  # 只有登录用户可以发布任务
+    parser_classes = [MultiPartParser, FormParser]  # 支持多部分表单数据
 
     def perform_create(self, serializer):
-        logger.info(f"Attempting to create task with data: {serializer.validated_data}")
+        #logger.info(f"Attempting to create task with data: {serializer.validated_data}")
         serializer.save(posted_by=self.request.user)
 
 class TaskApplicationCreateView(generics.CreateAPIView):
@@ -105,6 +109,19 @@ class TaskApplicationCreateView(generics.CreateAPIView):
         
         return super().post(request, *args, **kwargs)
 
+class TaskApplicationDeleteView(generics.DestroyAPIView):
+    queryset = TaskApplication.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        application_id = kwargs.get('pk')
+        try:
+            application = TaskApplication.objects.get(id=application_id, applicant=request.user)
+            application.delete()
+            return Response({"detail": "Application canceled successfully."}, status=status.HTTP_204_NO_CONTENT)
+        except TaskApplication.DoesNotExist:
+            raise NotFound("Application not found or you don't have permission to delete it.")
+
 class MyAppliedTasksView(generics.ListAPIView):
     serializer_class = TaskApplicationSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -125,4 +142,48 @@ class MyPostedTasksView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Task.objects.filter(posted_by=self.request.user)
+        # 使用 taskapplication_set__count 统计应用数量
+        return Task.objects.filter(posted_by=self.request.user).annotate(applicants_count=Count('applications'))
+
+class UpdateUserProfileView(generics.UpdateAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_object(), data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateTaskView(generics.UpdateAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # 支持文件上传
+
+    def get_queryset(self):
+        return Task.objects.filter(posted_by=self.request.user, status__in=['available', 'in_progress'])
+
+    def update(self, request, *args, **kwargs):
+        task = self.get_object()
+        data = request.data
+
+        serializer = self.get_serializer(task, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()  # 直接使用 serializer.save() 处理数据更新和文件存储
+
+        return Response(serializer.data)
+
+class TaskDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, pk, format=None):
+        try:
+            task = Task.objects.get(pk=pk, posted_by=request.user, status='available')
+            task.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Task.DoesNotExist:
+            return Response({"error": "Task not found or not available"}, status=status.HTTP_404_NOT_FOUND)

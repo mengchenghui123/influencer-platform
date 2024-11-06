@@ -63,6 +63,11 @@ const routes = [
     },
   },
   {
+    path: '/tasks/:id/update',
+    name: 'UpdateTask',
+    component: () => import('@/components/UpdateTask.vue')
+  },
+  {
     path: '/:catchAll(.*)',
     redirect: '/login'
   },

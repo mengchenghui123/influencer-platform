@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div class="container my-5">
       <div class="card shadow-lg">
         <div class="card-header text-center bg-primary text-white">
@@ -15,14 +15,31 @@
                 <th>Status</th>
                 <th>Applicants</th>
                 <th>Deadline</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="task in tasks" :key="task.id">
                 <td>{{ task.title }}</td>
                 <td>{{ task.status }}</td>
-                <td>{{ task.applicants_count }}</td>
+                <td>{{ task.applicants_count || 0 }}</td>
                 <td>{{ task.deadline }}</td>
+                <td>
+                  <button
+                    v-if="task.status !== 'completed'"
+                    @click="goToUpdateTask(task.id)"
+                    class="btn btn-sm btn-warning"
+                  >
+                    Update
+                  </button>
+                  <button
+                    v-if="task.status === 'available'"
+                    @click="deleteTask(task.id)"
+                    class="btn btn-sm btn-danger ms-2"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -31,6 +48,7 @@
           <button @click="goToProfile" class="btn btn-secondary btn-sm">Back to Profile</button>
         </div>
       </div>
+      <div v-if="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
     </div>
   </template>
   
@@ -65,6 +83,23 @@
       },
       goToProfile() {
         this.$router.push('/profile');
+      },
+      goToUpdateTask(taskId) {
+        this.$router.push({ name: 'UpdateTask', params: { id: taskId } });
+      },
+      deleteTask(taskId) {
+        const token = localStorage.getItem('access_token');
+        axios
+          .delete(`http://127.0.0.1:8000/api/tasks/${taskId}/delete/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then(() => {
+            this.tasks = this.tasks.filter(task => task.id !== taskId);
+          })
+          .catch((error) => {
+            this.errorMessage = 'Failed to delete task. Please try again.';
+            console.error(error);
+          });
       },
     },
   };

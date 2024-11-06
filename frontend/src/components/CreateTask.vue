@@ -5,7 +5,7 @@
           <h3 class="mb-0">Create New Task</h3>
         </div>
         <div class="card-body">
-          <form @submit.prevent="createTask">
+          <form @submit.prevent="createTask" enctype="multipart/form-data">
             <div class="form-group mb-3">
               <label for="title" class="form-label">Title</label>
               <input type="text" id="title" v-model="title" class="form-control" required />
@@ -13,6 +13,10 @@
             <div class="form-group mb-3">
               <label for="description" class="form-label">Description</label>
               <textarea id="description" v-model="description" class="form-control" required></textarea>
+            </div>
+            <div class="form-group mb-3">
+              <label for="file" class="form-label">Upload File or Image</label>
+              <input type="file" id="file" @change="handleFileUpload" class="form-control" />
             </div>
             <div class="form-group mb-3">
               <label for="budget" class="form-label">Budget</label>
@@ -45,28 +49,33 @@
         description: '',
         budget: null,
         deadline: '',
+        file: null,
         successMessage: '',
         errorMessage: ''
       };
     },
     methods: {
+      handleFileUpload(event) {
+        this.file = event.target.files[0];
+      },
       createTask() {
         const token = localStorage.getItem('access_token');
+        const formData = new FormData();
+        formData.append('title', this.title);
+        formData.append('description', this.description);
+        formData.append('budget', this.budget);
+        formData.append('deadline', this.deadline);
+        if (this.file) {
+          formData.append('file', this.file);
+        }
+  
         axios
-          .post(
-            'http://127.0.0.1:8000/api/tasks/create/',
-            {
-              title: this.title,
-              description: this.description,
-              budget: this.budget,
-              deadline: this.deadline
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
+          .post('http://127.0.0.1:8000/api/tasks/create/', formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
             }
-          )
+          })
           .then(() => {
             this.successMessage = 'Task created successfully!';
             this.errorMessage = '';
@@ -83,6 +92,7 @@
         this.description = '';
         this.budget = null;
         this.deadline = '';
+        this.file = null;
         this.errorMessage = '';
       },
       goToTaskList() {

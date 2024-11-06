@@ -144,3 +144,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 用于存储文件的基础目录
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# 允许的文件上传类型，如果没有设置，请添加
+ALLOWED_UPLOAD_FILE_TYPES = ['txt', 'pdf', 'doc', 'docx', 'jpg', 'png', 'jpeg']

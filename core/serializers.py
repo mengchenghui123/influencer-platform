@@ -9,7 +9,8 @@ User = get_user_model()
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'role']  # 确保序列化器返回 role
+        fields = ['id', 'username', 'email', 'role', 'phone_number', 'address', 'first_name', 'last_name']
+        read_only_fields = ['id', 'username', 'role']  # 禁止用户更新 ID、用户名和角色
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,25 +49,35 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
     
 class CustomUserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'role', 'phone_number', 'address','first_name','last_name']
 
+
 class TaskSerializer(serializers.ModelSerializer):
     posted_by = serializers.CharField(source='posted_by.username', read_only=True)  # 返回用户名而非ID
+    # 确保文件字段是只读或上传后返回 URL
+    image = serializers.ImageField(required=False, allow_null=True)
+    file = serializers.FileField(required=False, allow_null=True, allow_empty_file=True)
+    applicants_count = serializers.IntegerField(read_only=True)
+
 
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'budget', 'deadline', 'created_at', 'updated_at', 'posted_by','status']
+        fields = ['id', 'title', 'description', 'budget', 'deadline', 'created_at', 'updated_at', 'posted_by','status','image', 'file','applicants_count']
         read_only_fields = ['id', 'created_at', 'updated_at', 'posted_by']
     
     def create(self, validated_data):
         return Task.objects.create(**validated_data)
+
+    
     
 class TaskApplicationSerializer(serializers.ModelSerializer):
+    task = TaskSerializer(read_only=True)  # 使用嵌套的 TaskSerializer
+
     class Meta:
         model = TaskApplication
-        fields = ['id', 'task', 'applicant', 'status', 'applied_at']
+        fields = ['id', 'task', 'status', 'applied_at']
         read_only_fields = ['id', 'applicant', 'task', 'status', 'applied_at']
-
 
