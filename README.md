@@ -1,4 +1,5 @@
 Influencer Platform
+
 This project is an Influencer Platform where merchants can post tasks, influencers can apply for tasks, and an administrator oversees the platform’s activities. Each user role (merchant, influencer, and admin) has unique features, which are outlined below.
 
 Usage Guide
