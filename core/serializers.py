@@ -1,18 +1,23 @@
 from rest_framework import serializers
 from .models import CustomUser, Task, TaskApplication
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 
 # 获取自定义用户模型
 User = get_user_model()
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """
+    序列化用户模型，提供用户的基本信息，限制 ID、用户名和角色字段只读。
+    """
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'role', 'phone_number', 'address', 'first_name', 'last_name']
-        read_only_fields = ['id', 'username', 'role']  # 禁止用户更新 ID、用户名和角色
+        read_only_fields = ['id', 'username', 'role']
 
 class RegisterSerializer(serializers.ModelSerializer):
+    """
+    用户注册序列化器，确保角色选择有效，提供基本用户信息的创建功能。
+    """
     class Meta:
         model = CustomUser
         fields = ['username', 'password', 'email', 'role', 'phone_number', 'address', 'first_name', 'last_name']
@@ -48,36 +53,30 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
     
-class CustomUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'role', 'phone_number', 'address','first_name','last_name']
-
-
 class TaskSerializer(serializers.ModelSerializer):
-    posted_by = serializers.CharField(source='posted_by.username', read_only=True)  # 返回用户名而非ID
-    # 确保文件字段是只读或上传后返回 URL
+    """
+    任务序列化器，提供任务的基本信息，并处理附件字段。只读返回发布者用户名。
+    """
+    posted_by = serializers.CharField(source='posted_by.username', read_only=True)
     image = serializers.ImageField(required=False, allow_null=True)
     file = serializers.FileField(required=False, allow_null=True, allow_empty_file=True)
     applicants_count = serializers.IntegerField(read_only=True)
 
-
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'budget', 'deadline', 'created_at', 'updated_at', 'posted_by','status','image', 'file','applicants_count']
+        fields = ['id', 'title', 'description', 'budget', 'deadline', 'created_at', 'updated_at', 'posted_by', 'status', 'image', 'file', 'applicants_count']
         read_only_fields = ['id', 'created_at', 'updated_at', 'posted_by']
-    
+
     def create(self, validated_data):
         return Task.objects.create(**validated_data)
 
-    
-    
 class TaskApplicationSerializer(serializers.ModelSerializer):
-    task = TaskSerializer(read_only=True)  # 使用嵌套的 TaskSerializer
+    """
+    任务申请序列化器，嵌套显示任务信息，提供只读的任务和申请状态字段。
+    """
+    task = TaskSerializer(read_only=True)
 
     class Meta:
         model = TaskApplication
         fields = ['id', 'task', 'status', 'applied_at']
         read_only_fields = ['id', 'applicant', 'task', 'status', 'applied_at']
-

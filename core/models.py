@@ -7,16 +7,18 @@ from django.dispatch import receiver
 from django.db.models import Q
 
 class CustomUser(AbstractUser):
+    """
+    自定义用户模型，扩展了角色、电话号码和地址字段。
+    """
     ROLE_CHOICES = (
-        ('merchant', '商家'),
-        ('influencer', '网红'),
-        ('admin', '管理员'),
+        ('merchant', 'merchant'),
+        ('influencer', 'influencer'),
+        ('admin', 'admin'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='influencer')
     phone_number = models.CharField(max_length=15, blank=True)
     address = models.TextField(blank=True)
-    # 姓名字段
-    first_name = models.CharField(max_length=30, blank=True)
+    first_name = models.CharField(max_length=30, blank=True)  # 姓名字段
     last_name = models.CharField(max_length=30, blank=True)
 
     # 解决 groups 和 user_permissions 的 related_name 冲突
@@ -39,6 +41,9 @@ class CustomUser(AbstractUser):
 User = get_user_model()
 
 class Task(models.Model):
+    """
+    任务模型，包含任务的基本信息以及状态和附件字段。
+    """
     STATUS_CHOICES = [
         ('available', 'Available'),
         ('in_progress', 'In Progress'),
@@ -51,10 +56,10 @@ class Task(models.Model):
     deadline = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    posted_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name='tasks')
+    posted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
 
-    # 新增的字段
+    # 可选的附件字段
     image = models.ImageField(upload_to='task_images/', null=True, blank=True)
     file = models.FileField(upload_to='task_files/', null=True, blank=True)
 
@@ -62,17 +67,28 @@ class Task(models.Model):
         return self.title
 
 class TaskApplication(models.Model):
+    """
+    任务申请模型，记录用户对任务的申请信息，包括申请状态和申请时间。
+    """
+    STATUS_CHOICES = [
+        ('pending', 'pending'),
+        ('approved', 'approved'),
+        ('rejected', 'rejected'),
+    ]
+
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="applications")
     applicant = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="applications")
-    status = models.CharField(max_length=20, choices=[('pending', '待审核'), ('approved', '通过'), ('rejected', '拒绝')],default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     applied_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.applicant.username} applied for {self.task.title} with status {self.status}"
 
-# 当任务申请被批准后，更新对应任务的状态为 "in_progress"，并拒绝其他申请
 @receiver(post_save, sender=TaskApplication)
 def update_task_status(sender, instance, **kwargs):
+    """
+    信号处理器：当任务申请被批准后，更新对应任务的状态为 "in_progress"，并拒绝其他未批准的申请。
+    """
     if instance.status == 'approved':
         task = instance.task
         # 更新任务状态为 in_progress
@@ -81,5 +97,5 @@ def update_task_status(sender, instance, **kwargs):
         
         # 拒绝该任务的其他未批准的申请
         TaskApplication.objects.filter(
-            Q(task=task) & ~Q(id=instance.id)  # 使用 Q 对象组合条件
+            Q(task=task) & ~Q(id=instance.id)
         ).update(status='rejected')
