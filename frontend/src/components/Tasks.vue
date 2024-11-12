@@ -30,7 +30,7 @@
     </div>
 
     <!-- 如果是商家，显示发布任务的按钮 -->
-    <button v-if="isMerchant" @click="goToCreateTask" class="btn btn-primary mb-3">Post Task</button>
+    <button v-if="isMerchant" @click="goToCreateTask" class="btn btn-primary mb-3">Post</button>
 
     <!-- 任务表格 -->
     <div v-if="filteredTasks.length === 0">No tasks available.</div>
@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="task in filteredTasks" :key="task.id">
+        <tr v-for="task in paginatedTasks" :key="task.id">
           <td>{{ task.title }}</td>
           <td>{{ task.posted_by }}</td>
           <td>{{ task.status }}</td>
@@ -54,6 +54,21 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- 分页栏 -->
+    <nav aria-label="Page navigation" class="mt-3">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a class="page-link" @click.prevent="changePage(currentPage - 1)" href="#">Previous</a>
+        </li>
+        <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: page === currentPage }">
+          <a class="page-link" @click.prevent="changePage(page)" href="#">{{ page }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a class="page-link" @click.prevent="changePage(currentPage + 1)" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -68,8 +83,20 @@ export default {
       filteredTasks: [],
       isMerchant: false,
       selectedStatus: '',
-      searchQuery: '', // 搜索框的值
+      searchQuery: '',
+      currentPage: 1,
+      itemsPerPage: 10, // 每页显示的任务数量
     };
+  },
+  computed: {
+    totalPages() {
+      return Math.max(1, Math.ceil(this.filteredTasks.length / this.itemsPerPage)); // 确保至少为1页
+    },
+    paginatedTasks() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredTasks.slice(start, end);
+    },
   },
   mounted() {
     if (!localStorage.getItem('access_token')) {
@@ -124,6 +151,7 @@ export default {
           task.posted_by.toLowerCase().includes(this.searchQuery.toLowerCase());
         return matchesStatus && matchesSearch;
       });
+      this.currentPage = 1; // 重置页码
     },
     viewTask(taskId) {
       this.$router.push(`/tasks/${taskId}`);
@@ -131,12 +159,20 @@ export default {
     goToCreateTask() {
       this.$router.push('/create-task');
     },
+    changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
   },
   watch: {
     selectedStatus() {
       this.filterTasks();
     },
     searchQuery() {
+      this.filterTasks();
+    },
+    tasks() {
       this.filterTasks();
     },
   },

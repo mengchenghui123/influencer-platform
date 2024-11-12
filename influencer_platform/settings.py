@@ -95,8 +95,12 @@ WSGI_APPLICATION = 'influencer_platform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'influencer_platform_db',         # 替换为实际数据库名，例如 'my_influencer_db'
+        'USER': 'your_db_user',          # 替换为实际用户名，例如 'my_db_user'
+        'PASSWORD': 'password123',     # 替换为实际密码
+        'HOST': 'localhost',             # 数据库服务器地址，如果在本地则为 'localhost'
+        'PORT': '5432',                  # PostgreSQL 默认端口
     }
 }
 

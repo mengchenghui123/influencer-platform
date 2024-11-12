@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import TaskCreateView, TaskListView, TaskDetailView, RegisterView, UserDetailView, LogoutView,TaskApplicationCreateView,MyAppliedTasksView, MyPostedTasksView, TaskApplicationDeleteView,UpdateUserProfileView,UpdateTaskView,TaskDeleteView
+from .views import TaskCreateView, TaskListView, TaskDetailView, RegisterView, UserDetailView, LogoutView,TaskApplicationCreateView,MyAppliedTasksView, MyPostedTasksView, TaskApplicationDeleteView,UpdateUserProfileView,UpdateTaskView,TaskDeleteView,MarkTaskCompletedView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,6 +28,8 @@ urlpatterns = [
     path('api/my-applied-tasks/', MyAppliedTasksView.as_view(), name='my-applied-tasks'),
     path('api/my-posted-tasks/', MyPostedTasksView.as_view(), name='my-posted-tasks'),
     path('api/task-applications/<int:pk>/', TaskApplicationDeleteView.as_view(), name='task-application-delete'),
+
+    path('api/tasks/<int:pk>/mark_completed/', MarkTaskCompletedView.as_view(), name='mark_task_completed'),
 ]
 
 # 仅在开发环境启用

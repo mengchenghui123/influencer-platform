@@ -15,7 +15,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'email', 'role', 'phone_number', 'address','first_name','last_name']
+        fields = ['username', 'password', 'email', 'role', 'phone_number', 'address', 'first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_role(self, value):
@@ -32,8 +32,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         role = validated_data['role']  # 确保已选择角色
         phone_number = validated_data.get('phone_number', '')  # 默认电话号码为空
         address = validated_data.get('address', '')  # 默认地址为空
-        first_name=validated_data.get('first_name', ''),
-        last_name=validated_data.get('last_name', '')
+        first_name = validated_data.get('first_name', '')  # 去掉逗号
+        last_name = validated_data.get('last_name', '')  # 去掉逗号
 
         # 创建用户并保存角色、电话和地址
         user = CustomUser.objects.create_user(

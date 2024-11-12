@@ -1,4 +1,4 @@
-<template> 
+<template>
     <div class="container my-5">
       <div class="card shadow-lg">
         <div class="card-header text-center bg-primary text-white">
@@ -25,19 +25,29 @@
                 <td>{{ task.applicants_count || 0 }}</td>
                 <td>{{ task.deadline }}</td>
                 <td>
+                  <!-- 仅当任务状态为 available 时显示 Update 按钮 -->
                   <button
-                    v-if="task.status !== 'completed'"
+                    v-if="task.status === 'available'"
                     @click="goToUpdateTask(task.id)"
                     class="btn btn-sm btn-warning"
                   >
                     Update
                   </button>
+                  <!-- 仅当任务状态为 available 时显示 Delete 按钮 -->
                   <button
                     v-if="task.status === 'available'"
                     @click="deleteTask(task.id)"
                     class="btn btn-sm btn-danger ms-2"
                   >
                     Delete
+                  </button>
+                  <!-- 仅当任务状态为 in_progress 时显示 Done 按钮 -->
+                  <button
+                    v-if="task.status === 'in_progress'"
+                    @click="markAsCompleted(task.id)"
+                    class="btn btn-sm btn-success ms-2"
+                  >
+                    Done
                   </button>
                 </td>
               </tr>
@@ -98,6 +108,22 @@
           })
           .catch((error) => {
             this.errorMessage = 'Failed to delete task. Please try again.';
+            console.error(error);
+          });
+      },
+      markAsCompleted(taskId) {
+        const token = localStorage.getItem('access_token');
+        axios
+          .patch(`http://127.0.0.1:8000/api/tasks/${taskId}/mark_completed/`, null, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then(() => {
+            this.tasks = this.tasks.map(task => 
+              task.id === taskId ? { ...task, status: 'completed' } : task
+            );
+          })
+          .catch((error) => {
+            this.errorMessage = 'Failed to mark task as completed. Please try again.';
             console.error(error);
           });
       },

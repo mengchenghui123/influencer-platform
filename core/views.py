@@ -187,3 +187,16 @@ class TaskDeleteView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Task.DoesNotExist:
             return Response({"error": "Task not found or not available"}, status=status.HTTP_404_NOT_FOUND)
+
+class MarkTaskCompletedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        try:
+            task = Task.objects.get(pk=pk, posted_by=request.user, status='in_progress')
+            task.status = 'completed'
+            task.save()
+            serializer = TaskSerializer(task)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Task.DoesNotExist:
+            return Response({"error": "Task not found or not in progress"}, status=status.HTTP_404_NOT_FOUND)
