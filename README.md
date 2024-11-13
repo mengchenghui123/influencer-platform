@@ -79,24 +79,39 @@ The platform provides the following key API endpoints for use within the applica
 Authentication:
 
 /api/login/: User login with token authentication.
+
 /api/register/: User registration.
+
 /api/logout/: Logout and blacklist token.
+
 User Profile:
 
 /api/me/: Get the current user profile.
+
 /api/update-profile/: Update user profile.
+
 Task Management:
 
 /api/tasks/: Retrieve all tasks.
+
 /api/tasks/create/: Create a new task (merchant-only).
+
 /api/tasks/<id>/: Get details of a specific task.
+
 /api/tasks/<id>/update/: Update a task (merchant-only).
+
 /api/tasks/<id>/delete/: Delete a task (merchant-only).
+
 /api/tasks/<id>/mark_completed/: Mark a task as completed (merchant-only).
+
 Task Applications:
 
 /api/tasks/<id>/apply/: Apply for a task (influencer-only).
+
 /api/my-applied-tasks/: View influencer’s applied tasks.
+
 /api/my-posted-tasks/: View merchant’s posted tasks.
+
 /api/task-applications/<id>/: Cancel task application (influencer-only).
+
 Note: All API requests require authentication via an access token, which is provided after login.
