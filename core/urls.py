@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
-    home,TaskCreateView, TaskListView, TaskDetailView, RegisterView, UserDetailView, LogoutView,
+    redirect_to_login,TaskCreateView, TaskListView, TaskDetailView, RegisterView, UserDetailView, LogoutView,
     TaskApplicationCreateView, MyAppliedTasksView, MyPostedTasksView, TaskApplicationDeleteView,
     UpdateUserProfileView, UpdateTaskView, TaskDeleteView, MarkTaskCompletedView
 )
@@ -9,7 +9,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', home, name='home'),
+     path('', redirect_to_login, name='home'),
 
     # 用户认证相关 API
     path('api/login/', TokenObtainPairView.as_view(), name='api-login'),  # 登录路径
