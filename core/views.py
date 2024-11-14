@@ -10,11 +10,16 @@ from django.db.models import Count, Q
 from .serializers import CustomUserSerializer, RegisterSerializer, TaskSerializer, TaskApplicationSerializer
 from .models import Task, TaskApplication, CustomUser
 import logging
+from django.http import HttpResponse
+
 
 logger = logging.getLogger(__name__)
 
 # 获取自定义用户模型
 User = get_user_model()
+
+def home(request):
+    return HttpResponse("Welcome to the Influencer Platform")
 
 # 用户注册视图
 class RegisterView(generics.CreateAPIView):
