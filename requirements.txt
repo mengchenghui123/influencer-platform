@@ -1,14 +1,14 @@
-asgiref==3.7.2
+asgiref==3.7.2 
 dj-database-url==2.2.0
 Django==3.2.25
-backports.zoneinfo;python_version<"3.9"
 django-cors-headers==4.1.0
 django-extensions==3.2.3
 djangorestframework==3.15.1
 djangorestframework-simplejwt==5.3.0
 Pillow==9.5.0
-#psycopg2-binary=2.9.9
+psycopg2-binary==2.9.9
 PyJWT==2.8.0
 pytz==2024.2
 sqlparse==0.4.4
 typing_extensions==4.7.1
+setuptools
