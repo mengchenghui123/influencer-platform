@@ -9,7 +9,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-     path('', redirect_to_login, name='home'),
 
     # 用户认证相关 API
     path('api/login/', TokenObtainPairView.as_view(), name='api-login'),  # 登录路径
