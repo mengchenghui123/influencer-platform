@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-
+import dj_database_url  # 确保 dj-database-url 包已经安装
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,14 +97,9 @@ WSGI_APPLICATION = 'influencer_platform.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'influencer_platform_db',         
-        'USER': 'your_db_user',          
-        'PASSWORD': 'password123',     
-        'HOST': 'localhost',             # 数据库服务器地址，如果在本地则为 'localhost'
-        'PORT': '5432',                  # PostgreSQL 默认端口
-    }
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE_URL")
+    )
 }
 
 
