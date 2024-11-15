@@ -51,6 +51,10 @@
 <script>
 import axios from 'axios';
 
+const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
+
 export default {
   name: 'CreateTask',
   data() {
@@ -89,7 +93,7 @@ export default {
       }
 
       axios
-        .post('http://127.0.0.1:8000/api/tasks/create/', formData, {
+        .post(`${API_BASE_URL}/api/tasks/create/`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'

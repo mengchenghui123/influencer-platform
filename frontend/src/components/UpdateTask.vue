@@ -55,6 +55,11 @@
   
   <script>
   import axios from 'axios';
+
+  const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
+
   
   export default {
     name: 'UpdateTask',
@@ -81,7 +86,7 @@
         const token = localStorage.getItem('access_token');
         const taskId = this.$route.params.id;
         axios
-          .get(`http://127.0.0.1:8000/api/tasks/${taskId}/`, {
+          .get(`${API_BASE_URL}/api/tasks/${taskId}/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then(response => {
@@ -129,7 +134,7 @@
         }
   
         axios
-          .put(`http://127.0.0.1:8000/api/tasks/${taskId}/update/`, formData, {
+          .put(`${API_BASE_URL}/api/tasks/${taskId}/update/`, formData, {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'multipart/form-data'

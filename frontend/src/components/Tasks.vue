@@ -75,6 +75,11 @@
 <script>
 import axios from 'axios';
 
+const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
+
+
 export default {
   name: 'TaskList',
   data() {
@@ -117,7 +122,7 @@ export default {
     fetchUserRole() {
       const token = localStorage.getItem('access_token');
       axios
-        .get('http://127.0.0.1:8000/api/me/', {
+        .get(`${API_BASE_URL}/api/me/`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -130,7 +135,7 @@ export default {
     fetchTasks() {
       const token = localStorage.getItem('access_token');
       axios
-        .get('http://127.0.0.1:8000/api/tasks/', {
+        .get(`${API_BASE_URL}/api/tasks/`, {
           headers: {
             Authorization: 'Bearer ' + token,
           },

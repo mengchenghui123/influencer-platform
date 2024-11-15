@@ -58,6 +58,10 @@
   
   <script>
   import axios from 'axios';
+
+  const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
   
   export default {
     name: 'MyApplications',
@@ -75,7 +79,7 @@
       fetchApplications() {
         const token = localStorage.getItem('access_token');
         axios
-          .get('http://127.0.0.1:8000/api/my-applied-tasks/', {
+          .get(`${API_BASE_URL}/api/my-applied-tasks/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
@@ -92,7 +96,7 @@
       cancelApplication(applicationId) {
         const token = localStorage.getItem('access_token');
         axios
-          .delete(`http://127.0.0.1:8000/api/task-applications/${applicationId}/`, {
+          .delete(`${API_BASE_URL}/api/task-applications/${applicationId}/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then(() => {

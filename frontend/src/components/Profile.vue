@@ -103,6 +103,11 @@
   
   <script>
   import axios from 'axios';
+
+  const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
+  
   
   export default {
     name: 'UserProfile',
@@ -122,7 +127,7 @@
       fetchUserProfile() {
         const accessToken = localStorage.getItem('access_token');
         axios
-          .get('http://127.0.0.1:8000/api/me/', {
+          .get(`${API_BASE_URL}/api/me/`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           })
           .then((response) => {
@@ -141,7 +146,7 @@
         const accessToken = localStorage.getItem('access_token');
         axios
           .put(
-            'http://127.0.0.1:8000/api/update-profile/',
+            `${API_BASE_URL}/api/update-profile/`,
             {
               first_name: this.user.first_name,
               last_name: this.user.last_name,

@@ -65,6 +65,11 @@
   
   <script>
   import axios from 'axios';
+
+  const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
+  
   
   export default {
     name: 'UserRegister',
@@ -83,7 +88,7 @@
     },
     methods: {
       register() {
-        axios.post('http://127.0.0.1:8000/api/register/', {
+        axios.post(`${API_BASE_URL}/api/register/`, {
           username: this.username,
           email: this.email,
           password: this.password,

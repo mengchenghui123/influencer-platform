@@ -65,6 +65,11 @@
   <script>
   import axios from 'axios';
   
+  const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-three.vercel.app';
+  
+
   export default {
     name: 'MyTasks',
     data() {
@@ -80,7 +85,7 @@
       fetchTasks() {
         const token = localStorage.getItem('access_token');
         axios
-          .get('http://127.0.0.1:8000/api/my-posted-tasks/', {
+          .get(`${API_BASE_URL}/api/my-posted-tasks/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
@@ -100,7 +105,7 @@
       deleteTask(taskId) {
         const token = localStorage.getItem('access_token');
         axios
-          .delete(`http://127.0.0.1:8000/api/tasks/${taskId}/delete/`, {
+          .delete(`${API_BASE_URL}/api/tasks/${taskId}/delete/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then(() => {
@@ -114,7 +119,7 @@
       markAsCompleted(taskId) {
         const token = localStorage.getItem('access_token');
         axios
-          .patch(`http://127.0.0.1:8000/api/tasks/${taskId}/mark_completed/`, null, {
+          .patch(`${API_BASE_URL}/api/tasks/${taskId}/mark_completed/`, null, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then(() => {
