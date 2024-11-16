@@ -140,7 +140,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/'  # URL前缀
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 生产环境下收集静态文件的目录
+
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 本地开发时的静态文件路径
+else:
+    STATICFILES_DIRS = []  # 生产环境下无需指定
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
