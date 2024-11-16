@@ -12,7 +12,7 @@ __pycache__/
 .vscode/
 
 # Static files
-staticfiles/
+#staticfiles/
 
 # Environment variables file
 .env

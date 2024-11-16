@@ -8,7 +8,7 @@
     ],
     "routes": [
         {
-            "src": "/static/(.*)",
+            "src": "/staticfiles/(.*)",
             "dest": "/staticfiles/$1"
         },
         { "src": "/(.*)", "dest": "influencer_platform/wsgi.py" }
