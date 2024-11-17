@@ -143,10 +143,14 @@ USE_TZ = True
 STATIC_URL = '/static/'  # URL前缀
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 生产环境下收集静态文件的目录
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+'''
 if DEBUG:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 本地开发时的静态文件路径
 else:
     STATICFILES_DIRS = []  # 生产环境下无需指定
+'''
 
 
 # Default primary key field type
