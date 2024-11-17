@@ -4,11 +4,15 @@
         "src": "influencer_platform/wsgi.py",
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "15mb" }
+      },
+      {
+        "src": "/staticfiles/*",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
         {
-            "src": "/staticfiles/(.*)",
+            "src": "/static/(.*)",
             "dest": "/staticfiles/$1"
         },
         { "src": "/(.*)", "dest": "influencer_platform/wsgi.py" }
