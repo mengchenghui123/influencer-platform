@@ -141,7 +141,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'  # URL前缀
-STATIC_ROOT = os.path.join(BASE_DIR, 'frontend','static')  # 生产环境下收集静态文件的目录
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # 生产环境下收集静态文件的目录
 
 
 '''
