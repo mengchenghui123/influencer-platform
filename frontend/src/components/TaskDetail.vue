@@ -10,28 +10,30 @@
             <p><strong>Budget:</strong> {{ task.budget }}</p>
             <p><strong>Deadline:</strong> {{ task.deadline }}</p>
             <p><strong>Posted by:</strong> {{ task.posted_by }}</p>
-  
-            <!-- Attachment Section -->
+            
+            <!-- 
+            //Attachment Section
             <div class="mt-3">
               <p><strong>Attachment:</strong></p>
   
-              <!-- 显示图片 -->
+              //显示图片
               <div v-if="task.image" class="mt-2">
                 <img :src="task.image" alt="Task Image" class="img-fluid mb-3" />
               </div>
   
-              <!-- 文件下载链接 -->
+              //文件下载链接
               <div v-if="task.file" class="mt-2">
                 <a :href="task.file" download class="btn btn-light text-primary btn-sm">
                   Download File
                 </a>
               </div>
   
-              <!-- 没有附件时显示文本 -->
+              //没有附件时显示文本
               <div v-if="!task.file && !task.image" class="mt-2 text-light">
                 No attachments available.
               </div>
             </div>
+             -->
           </div>
           <div v-else>
             <p>Loading...</p>

@@ -14,19 +14,22 @@
             <label for="description" class="form-label">Description</label>
             <textarea id="description" v-model="description" class="form-control" required></textarea>
           </div>
-          
-          <!-- 文件上传部分 -->
+
+          <!--
+          //文件上传部分
           <div class="form-group mb-3">
             <label for="file" class="form-label">Upload File</label>
             <input type="file" id="file" @change="handleFileUpload" class="form-control" />
           </div>
-
-          <!-- 图片上传部分 -->
+          
+          
+          //图片上传部分
           <div class="form-group mb-3">
             <label for="image" class="form-label">Upload Image</label>
             <input type="file" id="image" @change="handleImageUpload" class="form-control" />
           </div>
-          
+          -->
+                    
           <div class="form-group mb-3">
             <label for="budget" class="form-label">Budget</label>
             <input type="number" id="budget" v-model="budget" class="form-control" required />
@@ -63,8 +66,8 @@ export default {
       description: '',
       budget: null,
       deadline: '',
-      file: null,
-      image: null,
+      //file: null,
+      //image: null,
       successMessage: '',
       errorMessage: ''
     };
@@ -76,6 +79,7 @@ export default {
     handleImageUpload(event) {
       this.image = event.target.files[0];
     },
+  
     createTask() {
       const token = localStorage.getItem('access_token');
       const formData = new FormData();
@@ -83,14 +87,16 @@ export default {
       formData.append('description', this.description);
       formData.append('budget', this.budget);
       formData.append('deadline', this.deadline);
+      
+      
+      //if (this.file) {
+        //formData.append('file', this.file);
+      //}
 
-      if (this.file) {
-        formData.append('file', this.file);
-      }
-
-      if (this.image) {
-        formData.append('image', this.image);
-      }
+      //if (this.image) {
+        //formData.append('image', this.image);
+      //}
+      
 
       axios
         .post(`${API_BASE_URL}/api/tasks/create/`, formData, {

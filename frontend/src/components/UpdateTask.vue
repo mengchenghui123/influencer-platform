@@ -22,8 +22,8 @@
               <label for="deadline" class="form-label">Deadline</label>
               <input type="date" v-model="task.deadline" class="form-control" required />
             </div>
-  
-            <!-- 文件上传部分 -->
+
+            <!-- 文件上传部分
             <div class="form-group mb-3">
               <label for="file" class="form-label">File Attachment</label>
               <input type="file" @change="handleFileUpload" class="form-control" />
@@ -33,7 +33,7 @@
               </div>
             </div>
   
-            <!-- 图片上传部分 -->
+            //图片上传部分
             <div class="form-group mb-3">
               <label for="image" class="form-label">Image Attachment</label>
               <input type="file" @change="handleImageUpload" class="form-control" />
@@ -42,7 +42,9 @@
                 <img :src="task.image" alt="Task Image" class="img-fluid mb-2" />
                 <button type="button" @click="removeImage" class="btn btn-sm btn-danger">Remove Image</button>
               </div>
+              
             </div>
+             -->
   
             <button type="submit" class="btn btn-success">Save Changes</button>
             <button @click="goBack" class="btn btn-secondary ms-3">Cancel</button>
@@ -70,11 +72,11 @@
           description: '',
           budget: null,
           deadline: '',
-          file: null,
-          image: null
+          //file: null,
+          //image: null
         },
-        newFile: null, // 新的文件
-        newImage: null, // 新的图片
+        //newFile: null, // 新的文件
+        //newImage: null, // 新的图片
         errorMessage: ''
       };
     },
@@ -96,18 +98,19 @@
             this.errorMessage = 'Failed to load task data.';
           });
       },
-      handleFileUpload(event) {
-        this.newFile = event.target.files[0];
-      },
-      handleImageUpload(event) {
-        this.newImage = event.target.files[0];
-      },
-      removeFile() {
-        this.task.file = null;
-      },
-      removeImage() {
-        this.task.image = null;
-      },
+      
+      //handleFileUpload(event) {
+        //this.newFile = event.target.files[0];
+      //},
+      //handleImageUpload(event) {
+        //this.newImage = event.target.files[0];
+      //},
+      //removeFile() {
+        //this.task.file = null;
+      //},
+      //removeImage() {
+        //this.task.image = null;
+      //},
       updateTask() {
         const token = localStorage.getItem('access_token');
         const taskId = this.$route.params.id;
@@ -118,20 +121,21 @@
         formData.append('description', this.task.description);
         formData.append('budget', this.task.budget);
         formData.append('deadline', this.task.deadline);
-  
+        
+        
         // 检查是否上传新文件或删除旧文件
-        if (this.newFile) {
-          formData.append('file', this.newFile);
-        } else if (!this.task.file) {
-          formData.append('file', ''); // 表示删除文件
-        }
+        //if (this.newFile) {
+          //formData.append('file', this.newFile);
+        //} else if (!this.task.file) {
+          //formData.append('file', ''); // 表示删除文件
+        //}
   
         // 检查是否上传新图片或删除旧图片
-        if (this.newImage) {
-          formData.append('image', this.newImage);
-        } else if (!this.task.image) {
-          formData.append('image', ''); // 表示删除图片
-        }
+        //if (this.newImage) {
+          //formData.append('image', this.newImage);
+        //} else if (!this.task.image) {
+          //formData.append('image', ''); // 表示删除图片
+        //}
   
         axios
           .put(`${API_BASE_URL}/api/tasks/${taskId}/update/`, formData, {

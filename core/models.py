@@ -60,8 +60,8 @@ class Task(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
 
     # 可选的附件字段
-    image = models.ImageField(upload_to='task_images/', null=True, blank=True)
-    file = models.FileField(upload_to='task_files/', null=True, blank=True)
+    #image = models.ImageField(upload_to='task_images/', null=True, blank=True)
+    #file = models.FileField(upload_to='task_files/', null=True, blank=True)
 
     def __str__(self):
         return self.title
