@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: influencer-platform
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn influencer_platform.wsgi:application"
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: influencer_platform.settings
+      - key: SECRET_KEY
+        value: "django-insecure-=h0&b5u7tr0q)b%savimqab^p&=b_q%skzmqi9u@0w=&*err8%" 
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        value: "postgresql://postgres.wxefcldfldcsysukdcve:mengchenghui@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+
+databases:
+  - name: postgres-db
+    plan: free
+    settings:
+      engine: postgresql
