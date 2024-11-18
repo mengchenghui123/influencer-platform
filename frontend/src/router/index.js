@@ -7,11 +7,23 @@ import UserProfile from '../components/Profile.vue';
 import CreateTask from '../components/CreateTask.vue';
 import MyTasks from '@/components/MyTasks.vue';
 import MyApplications from '@/components/MyApplications.vue';
+import AboutUs from '../components/AboutUs.vue'; // About Us 页面
+import Contact from '../components/Contact.vue'; // Contact 页面
 
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    name:'Home',
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: AboutUs, // About Us 路由
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact, // Contact 路由
   },
   {
     path: '/login',
