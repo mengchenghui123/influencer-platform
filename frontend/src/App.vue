@@ -5,29 +5,23 @@
         <h1>
           <router-link to="/" class="app-title">Influencer Platform</router-link>
         </h1>
-        <div class="nav-main-links-container">
-          <div class="nav-main-links">
-            <router-link to="/about">About Us</router-link>
-            <router-link to="/tasks">Task</router-link>
-            <router-link to="/contact">Contact</router-link>
-          </div>
+        <div class="nav-main-links">
+          <router-link to="/about" class="nav-link">About Us</router-link>
+          <router-link to="/tasks" class="nav-link">Task</router-link>
+          <router-link to="/contact" class="nav-link">Contact</router-link>
         </div>
       </div>
       <nav>
         <div class="nav-user-links">
-          <!-- 动态显示“Welcome, 角色 + 用户名” -->
           <span v-if="isLoggedIn">Welcome, {{ role }} {{ username }}</span>
-          <!-- 用户未登录时显示 Login 和 Register -->
-          <router-link v-if="!isLoggedIn" to="/login">Login</router-link>
-          <router-link v-if="!isLoggedIn" to="/register">Register</router-link>
-          <!-- 用户登录后显示 Profile 和 Logout -->
-          <router-link v-if="isLoggedIn" to="/profile">Profile</router-link>
-          <button v-if="isLoggedIn" @click="logout">Logout</button>
+          <router-link v-if="!isLoggedIn" to="/login" class="nav-link">Login</router-link>
+          <router-link v-if="!isLoggedIn" to="/register" class="nav-link">Register</router-link>
+          <router-link v-if="isLoggedIn" to="/profile" class="nav-link">Profile</router-link>
+          <button v-if="isLoggedIn" @click="logout" class="nav-link">Logout</button>
         </div>
       </nav>
     </header>
 
-    <!-- 如果是主界面则显示默认内容 -->
     <div v-if="$route.path === '/'" class="about-content">
       <p>
         Welcome to the Influencer Platform. This is a space where businesses and
@@ -35,7 +29,6 @@
       </p>
     </div>
 
-    <!-- 如果不是主界面，则显示 Router 视图 -->
     <router-view v-else></router-view>
   </div>
 </template>
@@ -51,9 +44,9 @@ const API_BASE_URL =
 export default {
   data() {
     return {
-      isLoggedIn: !!localStorage.getItem("access_token"), // 检查登录状态
-      username: localStorage.getItem("username") || "", // 从存储中获取用户名
-      role: localStorage.getItem("role") || "", // 从存储中获取角色
+      isLoggedIn: !!localStorage.getItem("access_token"),
+      username: localStorage.getItem("username") || "",
+      role: localStorage.getItem("role") || "",
       errorMessage: "",
     };
   },
@@ -61,22 +54,18 @@ export default {
     async login(username, password) {
       try {
         const response = await axios.post(`${API_BASE_URL}/api/login/`, {
-          username: username,
-          password: password,
+          username,
+          password,
         });
         const token = response.data.access;
-        localStorage.setItem("access_token", token); // 保存令牌
-        localStorage.setItem("username", username); // 保存用户名
-        this.isLoggedIn = true; // 更新登录状态
+        localStorage.setItem("access_token", token);
+        localStorage.setItem("username", username);
+        this.isLoggedIn = true;
         this.username = username;
-
-        // 获取用户的角色信息
         await this.fetchUserRole();
-
-        // 登录后重定向到任务页面
         this.$router.push("/tasks");
       } catch (error) {
-        this.errorMessage = "登录失败，请检查您的凭据。";
+        this.errorMessage = "Login failed. Please check your credentials.";
       }
     },
     async fetchUserRole() {
@@ -85,28 +74,26 @@ export default {
         const response = await axios.get(`${API_BASE_URL}/api/me/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        this.role = response.data.role; // 设置角色
-        localStorage.setItem("role", this.role); // 保存角色到 localStorage
+        this.role = response.data.role;
+        localStorage.setItem("role", this.role);
       } catch (error) {
         console.error("Error fetching user role:", error);
       }
     },
     logout() {
-      localStorage.removeItem("access_token"); // 删除令牌
-      localStorage.removeItem("username"); // 删除用户名
-      localStorage.removeItem("role"); // 删除角色
-      this.isLoggedIn = false; // 更新登录状态
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      this.isLoggedIn = false;
       this.username = "";
       this.role = "";
-      this.$router.push("/"); // 登出后返回主页面
+      this.$router.push("/");
     },
   },
   created() {
-    // 在组件创建时验证登录状态，防止刷新后状态丢失
     this.isLoggedIn = !!localStorage.getItem("access_token");
     this.username = localStorage.getItem("username") || "";
     this.role = localStorage.getItem("role") || "";
-    // 如果已登录但没有角色信息，尝试获取
     if (this.isLoggedIn && !this.role) {
       this.fetchUserRole();
     }
@@ -121,8 +108,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #007bff;
-  color: white;
+  background-color: white;
+  border-bottom: 1px solid black;
 }
 
 .title-container {
@@ -132,15 +119,10 @@ export default {
 
 .app-title {
   text-decoration: none;
-  color: white;
+  color: black;
   cursor: pointer;
   margin-right: 2rem;
-}
-
-.nav-main-links-container {
-  border: 2px solid white;
-  padding: 0.5rem;
-  border-radius: 8px;
+  font-size: 1.2rem;
 }
 
 .nav-main-links {
@@ -148,24 +130,27 @@ export default {
   gap: 1rem;
 }
 
+.nav-main-links .nav-link,
+.nav-user-links .nav-link {
+  text-decoration: none;
+  cursor: pointer;
+  color: black;
+  padding: 0.5rem 1rem;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.nav-main-links .nav-link:hover,
+.nav-user-links .nav-link:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #f8f8f8;
+}
+
 .nav-user-links {
   display: flex;
   gap: 1rem;
-}
-
-.nav-main-links a,
-.nav-user-links a,
-.nav-user-links button {
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  background: none;
-  font: inherit;
-  color: white;
-}
-
-button {
-  cursor: pointer;
 }
 
 /* About Content 样式 */
