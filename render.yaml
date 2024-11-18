@@ -3,7 +3,7 @@ services:
     name: influencer-platform
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    buildCommand: "./build.sh"
     startCommand: "gunicorn influencer_platform.wsgi:application"
     autoDeploy: true
     envVars:
