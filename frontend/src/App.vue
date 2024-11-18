@@ -24,6 +24,12 @@
 <script>
 import axios from 'axios';
 
+const API_BASE_URL = window.location.hostname === 'localhost'
+? 'http://127.0.0.1:8000'
+: 'https://influencer-platform-uecu.onrender.com'
+
+;
+
 export default {
   data() {
     return {
@@ -36,7 +42,7 @@ export default {
   methods: {
     async login(username, password) {
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+        const response = await axios.post(`${API_BASE_URL}/api/login/`, {
           username: username,
           password: password,
         });
@@ -58,7 +64,7 @@ export default {
     async fetchUserRole() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://127.0.0.1:8000/api/me/', {
+        const response = await axios.get(`${API_BASE_URL}/api/me/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         this.role = response.data.role; // 设置角色
