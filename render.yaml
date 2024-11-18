@@ -15,9 +15,5 @@ services:
         value: "False"
       - key: DATABASE_URL
         value: "postgresql://postgres.wxefcldfldcsysukdcve:mengchenghui@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
-
-databases:
-  - name: postgres-db
-    plan: free
-    settings:
-      engine: postgresql
+      - key: ALLOWED_HOSTS
+        value: "*"
