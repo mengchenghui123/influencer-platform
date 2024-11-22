@@ -15,4 +15,4 @@ __pycache__/
 #staticfiles/
 
 # Environment variables file
-.env
+#.env
