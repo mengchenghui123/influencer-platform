@@ -13,6 +13,11 @@
         </div>
         <div class="card-body">
           <div v-if="user">
+            <!-- 头像 -->
+            <div class="avatar-container">
+              <img :src="user.avatar || defaultAvatar" alt="Avatar" class="avatar" />
+            </div>
+
             <div v-if="!isEditing">
               <p><strong>Username:</strong> {{ user.username }}</p>
               <p><strong>First Name:</strong> {{ user.first_name }}</p>
@@ -21,8 +26,13 @@
               <p v-if="user.phone_number"><strong>Phone Number:</strong> {{ user.phone_number }}</p>
               <p v-if="user.address"><strong>Address:</strong> {{ user.address }}</p>
             </div>
-  
+            
+            <!-- 编辑内容-->
             <div v-else>
+              <div class="form-group mb-3">
+                <label for="avatar">Upload Avatar</label>
+                <input type="file" id="avatar" @change="handleAvatarUpload" class="form-control" />
+              </div>
               <div class="form-group mb-3">
                 <label for="firstName">First Name</label>
                 <input
@@ -118,6 +128,8 @@
         isEditing: false,
         successMessage: '',
         errorMessage: '',
+        avatarFile: null,
+        defaultAvatar: "https://via.placeholder.com/150", // Placeholder avatar
       };
     },
     mounted() {
@@ -152,6 +164,7 @@
               last_name: this.user.last_name,
               phone_number: this.user.phone_number,
               address: this.user.address,
+              avatarFile: this.user.avatarFile,
             },
             {
               headers: { Authorization: `Bearer ${accessToken}` },
@@ -185,6 +198,18 @@
   </script>
   
   <style scoped>
+  .avatar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .avatar {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 2px solid #007bff;
+  }
   .container {
     max-width: 600px;
   }

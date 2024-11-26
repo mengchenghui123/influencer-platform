@@ -18,9 +18,12 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='influencer')
     phone_number = models.CharField(max_length=15, blank=True)
     address = models.TextField(blank=True)
+
     first_name = models.CharField(max_length=30, blank=True)  # 姓名字段
     last_name = models.CharField(max_length=30, blank=True)
-    #avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)  # 头像
+
+    
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)  # 头像
 
     # 解决 groups 和 user_permissions 的 related_name 冲突
     groups = models.ManyToManyField(

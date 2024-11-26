@@ -35,6 +35,4 @@ urlpatterns = [
     path('api/task-applications/<int:pk>/', TaskApplicationDeleteView.as_view(), name='task-application-delete'),  # 取消任务申请
 ]
 
-# 仅在开发环境启用媒体文件服务
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
